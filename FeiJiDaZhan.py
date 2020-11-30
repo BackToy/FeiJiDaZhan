@@ -4,7 +4,8 @@ import pygame
 import time
 import random
 import sys
-from pygame.locals import *
+from pygame.locals import K_DOWN, K_UP, K_LEFT, K_RIGHT, K_s, K_SPACE,\
+    K_b, K_q, K_r, MOUSEBUTTONDOWN
 
 # 全局变量
 # 窗口
@@ -108,7 +109,8 @@ class BasePlane(Base):
         self.hitted = False  # 表示是否要爆炸
         self.bomb_picture_list = []  # 用来存储爆炸时需要的图片
         self.bomb_picture_num = picture_num  # 飞机爆炸效果的图片数量
-        self.picture_count = 0  # 用来记录while True的次数,当次数达到一定值时才显示一张爆炸的图,然后清空,,当这个次数再次达到时,再显示下一个爆炸效果的图片
+        # 用来记录while True的次数,当次数达到一定值时才显示一张爆炸的图,然后清空,,当这个次数再次达到时,再显示下一个爆炸效果的图片
+        self.picture_count = 0
         self.image_index = 0  # 用来记录当前要显示的爆炸效果的图片的序号
         self.HP = HP_temp  # 飞机hp
         self.fire_bullet_count = 0  # 飞机已发射子弹计数
@@ -119,10 +121,12 @@ class BasePlane(Base):
         global HP_list
         global plane_bomb_time  # 飞机爆炸效果计数
         # 如果被击中,就显示爆炸效果,否则显示普通的飞机效果
-        if self.hitted == True and self.image_index < self.bomb_picture_num and self.HP <= 0:
+        if (self.hitted and self.image_index < self.bomb_picture_num
+                and self.HP <= 0):
             self.screen.blit(self.bomb_picture_list[self.image_index],
                              (self.x, self.y))
-            if self.plane_type != 3 and self.image_index == 0 and self.picture_count == 0:
+            if (self.plane_type != 3 and self.image_index == 0
+                    and self.picture_count == 0):
                 if self.plane_type == 0:  # 击毁enemy0得分＋HP
                     if hit_score < 650:  # 初始血量为1
                         hit_score += HP_list[self.plane_type]
@@ -139,7 +143,9 @@ class BasePlane(Base):
                 self.image_index += 1
         elif self.image_index < self.bomb_picture_num:
             self.screen.blit(self.image, (self.x, self.y))  # 显示原图
-        if self.hitted == True and not self.bullet_list and self.image_index >= self.bomb_picture_num and self.HP <= 0:
+        if (self.hitted and not self.bullet_list
+                and self.image_index >= self.bomb_picture_num
+                and self.HP <= 0):
             del_plane(self)  # 删除被击中敌机的对象
         # 敌机飞出window后删除
         if self.y > 860:
@@ -155,10 +161,13 @@ class BasePlane(Base):
                                   ".png"))
 
     # 判断是否被击中
-    def isHitted(self, plane, width, height):  #  widht和height表示范围
+    def isHitted(self, plane, width, height):  # widht和height表示范围
         if plane.bullet_list and self.HP:
             for bullet in plane.bullet_list:
-                if bullet.x > self.x + 0.05 * width and bullet.x < self.x + 0.95 * width and bullet.y + 0.1 * height > self.y and bullet.y < self.y + 0.8 * height:
+                if (bullet.x > self.x + 0.05 * width
+                        and bullet.x < self.x + 0.95 * width
+                        and bullet.y + 0.1 * height > self.y
+                        and bullet.y < self.y + 0.8 * height):
                     self.HP -= bullet.damage_value  # hero的HP减去子弹的伤害值
                     if self.plane_type == 3:
                         show_score_HP()
@@ -166,12 +175,18 @@ class BasePlane(Base):
                     self.hitted = True
             if plane.plane_type == 3 and plane.barrel_2 and plane.barrel_3:
                 for bullet in plane.barrel_2:  # 判断炮管３是否击中
-                    if bullet.x > self.x + 0.05 * width and bullet.x < self.x + 0.95 * width and bullet.y + 0.1 * height > self.y and bullet.y < self.y + 0.8 * height:
+                    if (bullet.x > self.x + 0.05 * width
+                            and bullet.x < self.x + 0.95 * width
+                            and bullet.y + 0.1 * height > self.y
+                            and bullet.y < self.y + 0.8 * height):
                         self.HP -= bullet.damage_value  # hero的HP减去子弹的伤害值
                         plane.barrel_2.remove(bullet)  # 删除击中的子弹
                         self.hitted = True
                 for bullet in plane.barrel_3:  # 判断炮管３是否击中
-                    if bullet.x > self.x + 0.05 * width and bullet.x < self.x + 0.95 * width and bullet.y + 0.1 * height > self.y and bullet.y < self.y + 0.8 * height:
+                    if (bullet.x > self.x + 0.05 * width
+                            and bullet.x < self.x + 0.95 * width
+                            and bullet.y + 0.1 * height > self.y
+                            and bullet.y < self.y + 0.8 * height):
                         self.HP -= bullet.damage_value  # hero的HP减去子弹的伤害值
                         plane.barrel_3.remove(bullet)  # 删除击中的子弹
                         self.hitted = True
@@ -258,13 +273,10 @@ class HeroPlane(BasePlane):
     def press_move(self):
         if len(self.key_down_list) != 0:
             if len(self.key_down_list) == 2:  # 两个键
-                if (
-                        self.key_down_list[0] == K_LEFT
-                        and self.key_down_list[1] == K_UP
-                ) or (
-                        self.key_down_list[1] == K_LEFT
-                        and self.key_down_list[0] == K_UP
-                ):  # key_down_list列表存在按键为left,up 或 up,left时调用move_left_and_up()方法
+                if (self.key_down_list[0] == K_LEFT and self.key_down_list[1]
+                        == K_UP) or (self.key_down_list[1] == K_LEFT
+                                     and self.key_down_list[0] == K_UP):
+                    # key_down_list列表存在按键为left,up(无序)时调用move_left_and_up()方法
                     self.move_left_and_up()
                 elif (self.key_down_list[0] == K_RIGHT
                       and self.key_down_list[1]
@@ -340,7 +352,7 @@ class HeroPlane(BasePlane):
                 self.is_three_bullet = False
 
     # 是否吃到补给
-    def supply_hitted(self, supply_temp, width, height):  #  widht和height表示范围
+    def supply_hitted(self, supply_temp, width, height):  # widht和height表示范围
         if supply_temp and self.HP:
             # 更加精确的判断是否吃到补给
             supply_temp_left_x = supply_temp.x + supply_size[
@@ -351,7 +363,10 @@ class HeroPlane(BasePlane):
                 supply_temp.supply_type]["height"] * 0.4
             supply_temp_bottom_y = supply_temp.y + supply_size[
                 supply_temp.supply_type]["height"] * 0.9
-            if supply_temp_left_x > self.x + 0.05 * width and supply_temp_right_x < self.x + 0.95 * width and supply_temp_top_y < self.y + 0.95 * height and supply_temp_bottom_y > self.y + 0.1 * height:
+            if (supply_temp_left_x > self.x + 0.05 * width
+                    and supply_temp_right_x < self.x + 0.95 * width
+                    and supply_temp_top_y < self.y + 0.95 * height
+                    and supply_temp_bottom_y > self.y + 0.1 * height):
                 if supply_temp.supply_type == 0:  # 0为血量补给，吃到血量补给
                     self.HP -= supply_temp.supply_HP  # 血量-(-3)
                     if self.HP > 41:  # 血量最大值为41
@@ -660,7 +675,7 @@ def create_supply_2_hero(s_type):
         blood_supply = supply_2_hero(window_screen,
                                      random.randint(0, 480 - 58),
                                      random.randint(-105, -95), s_type, 3,
-                                     -3)  #  -补给类型, -速度, -补给血量值(用的是减法)
+                                     -3)  # -补给类型, -速度, -补给血量值(用的是减法)
     elif (random_supply % 300) == 0 and s_type == 1:  # 弹药补给
         bullet_supply = supply_2_hero(window_screen,
                                       random.randint(0, 480 - 60),
@@ -772,7 +787,7 @@ def show_max_score():
         file = open("./飞机大战得分榜.txt", "r")
         max_score = eval(file.read())
     except Exception as e:
-        raise
+        print("温馨提示：得分未正常保存", e)
     finally:  # 贴最高得分
         max_score_temp = cut_number(max_score)
         window_screen.blit(number_image[max_score_temp[0]], (590, 700))
@@ -850,6 +865,7 @@ def image_load():
         # line_image
         line_image = pygame.image.load("./img/line.png")
     except Exception as e:
+        print("温馨提示：图片加载异常", e)
         raise
 
 
@@ -884,6 +900,7 @@ def background_music_load():
             "./music/hero_fire.ogg")  # hero开火音乐
         hero_fire_music.set_volume(0.2)
     except Exception as e:
+        print("温馨提示：音乐文件加载异常", e)
         raise
 
 
@@ -902,11 +919,11 @@ def key_control():
     # 获取事件，比如按键等
     for event in pygame.event.get():
         # 判断是否是点击了退出按钮
-        if event.type == QUIT:
+        if event.type == pygame.QUIT:
             #  print("exit")
             sys.exit(0)
         # 判断是否是按下了键
-        elif event.type == KEYDOWN:
+        elif event.type == pygame.KEYDOWN:
             # 检测按键是否是left
             if hero:
                 if event.key == K_LEFT:
@@ -942,7 +959,7 @@ def key_control():
             if event.key == K_r:
                 reborn()
         # 判断是否是松开了键
-        elif event.type == KEYUP and hero:
+        elif event.type == pygame.KEYUP and hero:
             # 检测松键是否是left
             if event.key == K_LEFT:
                 hero.key_up(K_LEFT)
@@ -969,10 +986,12 @@ def key_control():
                         mouse_x = pos[0]
                         mouse_y = pos[1]
                         # 通过鼠标点击坐标确定触发的事件类型
-                        if mouse_x > 170 and mouse_x < 310 and mouse_y > 402 and mouse_y < 450 and is_pause == True:  # 返回游戏事件
+                        if (mouse_x > 170 and mouse_x < 310 and mouse_y > 402
+                                and mouse_y < 450 and is_pause):  # 返回游戏事件
                             pygame.mixer.music.unpause()  # 继续播放
                             is_pause = False  # 不暂停
-                        elif mouse_x > 530 and mouse_x < 642 and mouse_y > 760 and mouse_y < 808:  # 重新开始游戏事件
+                        elif (mouse_x > 530 and mouse_x < 642 and mouse_y > 760
+                              and mouse_y < 808):  # 重新开始游戏事件
                             # 回收所有对对象
                             reborn()
                             enemy0_list = []
@@ -982,7 +1001,8 @@ def key_control():
                             bullet_supply = None
                             #  hit_score = 0
                             #  main()
-                        elif mouse_x > 532 and mouse_x < 642 and mouse_y > 810 and mouse_y < 834:  # 退出游戏事件
+                        elif (mouse_x > 532 and mouse_x < 642 and mouse_y > 810
+                              and mouse_y < 834):  # 退出游戏事件
                             sys.exit(0)
 
 
