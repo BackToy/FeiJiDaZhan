@@ -1112,8 +1112,6 @@ def main():
         pygame.display.update()
         # 调用键盘控制
         key_control()
-        # 系统睡眠时间(电脑配置不同，影响游戏流畅运行度)
-        # time.sleep(0.04)
         clock.tick(30)  # 以每秒30帧的速率进行绘制
 
 

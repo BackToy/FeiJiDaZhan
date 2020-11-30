@@ -11,8 +11,6 @@ $ git clone git@github.com:BackToy/FeiJiDaZhan.git
 $ cd FeiJiDaZhan
 $ python3 FeiJiDaZhan.py
 ```
-
-不同的电脑配置将导致游戏流畅度不同。如需修改，请修改倒数第三行代码(time.sleep())的参数值。
 # References
 - [GYT0313/FeiJiDaZhan](https://github.com/GYT0313/FeiJiDaZhan)
 - [pygame之《飞机大战》（一）](https://guyongtao.blog.csdn.net/article/details/80040710)
