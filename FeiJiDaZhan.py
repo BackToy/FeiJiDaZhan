@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
+'''
+"Author: GuYongtao, E-mail: guyongtao@qq.com, Time: 2018/04/21"
+'''
 import pygame
 import time
 import random
@@ -885,10 +888,6 @@ def show_background_right_image():
     window_screen.blit(exit_game, (532, 810))  # 退出游戏图片
 
 
-# 导入音乐
-pygame.mixer.init()
-
-
 def background_music_load():
     try:
         global hero_fire_music
@@ -1027,12 +1026,15 @@ def main():
     global is_play_music
 
     print("Author: GuYongtao, E-mail: guyongtao@qq.com, Time: 2018/04/21")
-    # 得分过渡
-    hit_score_temp = hit_score
-    # 背景色
-    bg_color = (205, 205, 205)
-    # 1. 创建窗口
-    window_screen = pygame.display.set_mode((695, 852), 0, 32)
+
+    hit_score_temp = hit_score  # 得分过渡
+    bg_color = (205, 205, 205)  # 背景色
+    pygame.init()
+    clock = pygame.time.Clock()
+
+    pygame.mixer.init()  # 导入音乐
+
+    window_screen = pygame.display.set_mode((695, 852), 0, 32)  # 1. 创建窗口
     # 2. 创建一个背景图片
     try:
         image_load()  # 数字图片等导入
@@ -1111,7 +1113,8 @@ def main():
         # 调用键盘控制
         key_control()
         # 系统睡眠时间(电脑配置不同，影响游戏流畅运行度)
-        time.sleep(0.04)
+        # time.sleep(0.04)
+        clock.tick(30)  # 以每秒30帧的速率进行绘制
 
 
 if __name__ == "__main__":
